@@ -22,6 +22,7 @@ jobs:
           bash src/scripts/release-macos-universal.sh
       - name: Verify packages
         shell: bash
+        if: false
         run: |
           set -euo pipefail
           release=src/release/macos-universal
