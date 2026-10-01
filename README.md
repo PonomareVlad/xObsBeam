@@ -121,6 +121,8 @@ All other compression options (QOI, QOY, QOIR, Density, LZ4) and raw transmissio
 
 For uninstallation run the provided uninstaller `.pkg`, or manually remove the `xObsBeam.plugin` bundle from the plugins folder.
 
+The macOS packages can be built manually using the **Build macOS packages** GitHub Actions workflow (`Run workflow`). Download the `xObsBeam-macos-universal-unsigned` artifact to get the `.tar.xz`, installer `.pkg` and uninstaller `.pkg`. These packages are **unsigned and not notarized**; distributing packages without macOS security warnings requires Apple Developer ID signing and notarization.
+
 #### Running multiple OBS instances on macOS (Parall)
 
 macOS does not natively support running multiple instances of the same app. To run two OBS instances side by side (e.g. one as the Beam sender and one as the receiver) you can use a third-party tool like [Parall](https://parall.app), which launches separate OBS instances with isolated data folders and HOME overrides.

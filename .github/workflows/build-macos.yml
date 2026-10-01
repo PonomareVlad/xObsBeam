@@ -28,6 +28,7 @@ jobs:
       - name: Check architecture
         shell: bash
         run: |
+          set -euo pipefail
           for binary in xObsBeam.dylib libQoirLib.dylib libdensity.dylib; do
             lipo -verify_arch "${{ matrix.arch }}" "src/publish/${{ matrix.rid }}/$binary"
           done
@@ -56,6 +57,7 @@ jobs:
       - name: Create universal plugin and packages
         shell: bash
         run: |
+          set -euo pipefail
           SKIP_ARCH_BUILDS=1 bash src/scripts/build-macos-universal.sh
           bash src/scripts/release-macos-universal.sh
       - name: Verify packages
@@ -79,9 +81,9 @@ jobs:
           tar -xJf "${archive[0]}" -C "$RUNNER_TEMP"
           cmp "$bundle/MacOS/xObsBeam" "$RUNNER_TEMP/xObsBeam.plugin/Contents/MacOS/xObsBeam"
           pkgutil --payload-files "${installer[0]}" | grep -F 'xObsBeam.plugin/Contents/MacOS/xObsBeam'
-          pkgutil --expand "${installer[0]}" "$RUNNER_TEMP/installer"
+          pkgutil --expand-full "${installer[0]}" "$RUNNER_TEMP/installer"
           test -f "$RUNNER_TEMP/installer/Scripts/postinstall"
-          pkgutil --expand "${uninstaller[0]}" "$RUNNER_TEMP/uninstaller"
+          pkgutil --expand-full "${uninstaller[0]}" "$RUNNER_TEMP/uninstaller"
           test -f "$RUNNER_TEMP/uninstaller/Scripts/postinstall"
           echo "Packages are unsigned; signing and notarization require Apple Developer credentials."
       - uses: actions/upload-artifact@v7.0.1
