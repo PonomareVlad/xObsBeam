@@ -22,15 +22,24 @@ echo "=== Building $PLUGIN_NAME v$VERSION for macOS Universal ==="
 echo "Setting MACOS_DEPLOYMENT_TARGET=12.0"
 export MACOS_DEPLOYMENT_TARGET=12.0
 
-# 1. Build for arm64
-echo ""
-echo "[1/7] Building for arm64..."
-( cd "$SCRIPT_DIR" && bash build-osx-arm64.sh )
+if [ "${SKIP_ARCH_BUILDS:-0}" = "1" ]; then
+  echo "Using prebuilt arm64 and x64 binaries"
+  for arch in osx-arm64 osx-x64; do
+    for binary in "$PLUGIN_NAME.dylib" libQoirLib.dylib libdensity.dylib; do
+      test -f "$OUTPUT_DIR/$arch/$binary" || { echo "Missing $arch/$binary"; exit 1; }
+    done
+  done
+else
+  # 1. Build for arm64
+  echo ""
+  echo "[1/7] Building for arm64..."
+  ( cd "$SCRIPT_DIR" && bash build-osx-arm64.sh )
 
-# 2. Build for x64
-echo ""
-echo "[2/7] Building for x64..."
-( cd "$SCRIPT_DIR" && bash build-osx-x64.sh )
+  # 2. Build for x64
+  echo ""
+  echo "[2/7] Building for x64..."
+  ( cd "$SCRIPT_DIR" && bash build-osx-x64.sh )
+fi
 
 # 3. Create universal binaries with lipo
 echo ""

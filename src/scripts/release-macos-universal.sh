@@ -113,17 +113,8 @@ find "$BUNDLE_DIR" -type f | sort
 echo ""
 echo "[2/5] Creating .tar.xz archive..."
 
-# Create a temp directory with the plugin bundle wrapped in a PLUGIN_NAME folder
-TAR_TEMP_DIR="$OUTPUT_DIR/macos-universal/_tar_temp"
-rm -rf "$TAR_TEMP_DIR"
-mkdir -p "$TAR_TEMP_DIR/$PLUGIN_NAME"
-
-cp -R "$BUNDLE_DIR" "$TAR_TEMP_DIR/$PLUGIN_NAME/"
-
-cd "$TAR_TEMP_DIR"
-tar -cJf "$RELEASE_DIR/$PACKAGE_NAME.tar.xz" "$PLUGIN_NAME/"
-rm -rf "$TAR_TEMP_DIR"
-cd "$SRC_DIR"
+# Keep the bundle at the archive root so it extracts directly into the OBS plugins folder.
+tar -cJf "$RELEASE_DIR/$PACKAGE_NAME.tar.xz" -C "$RELEASE_DIR" "$PLUGIN_NAME.plugin"
 
 echo "Created: $RELEASE_DIR/$PACKAGE_NAME.tar.xz"
 ls -lh "$RELEASE_DIR/$PACKAGE_NAME.tar.xz"
@@ -151,6 +142,7 @@ if command -v pkgbuild &>/dev/null; then
 # Postinstall script for $PLUGIN_NAME
 # Copies the plugin bundle to the user's home directory
 # (pkgbuild's --install-location cannot expand \$HOME or ~)
+set -e
 
 PLUGIN_NAME="$PLUGIN_NAME"
 
@@ -164,6 +156,7 @@ if [ -n "\$CONSOLE_USER" ]; then
   USER_HOME="/Users/\$CONSOLE_USER"
   PLUGIN_DEST="\$USER_HOME/Library/Application Support/obs-studio/plugins"
   mkdir -p "\$PLUGIN_DEST"
+  rm -rf "\$PLUGIN_DEST/\$PLUGIN_NAME.plugin"
   cp -R "/tmp/$PLUGIN_NAME-installer/\$PLUGIN_NAME.plugin" "\$PLUGIN_DEST/"
   chown -R "\$CONSOLE_USER:staff" "\$PLUGIN_DEST/\$PLUGIN_NAME.plugin"
   echo "Installed \$PLUGIN_NAME.plugin to \$PLUGIN_DEST"
