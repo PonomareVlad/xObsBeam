@@ -106,7 +106,7 @@ For manual installation extract the downloaded `.tar.xz` file (= copy the contai
 This can be done with:
 
 ```
-tar -xJf xObsBeam-*-macos-universal.tar.xz -C ~/Library/Application\ Support/obs-studio/plugins/
+tar -xJf xObsBeam-*-macos-universal.tar.xz --strip-components=1 -C ~/Library/Application\ Support/obs-studio/plugins/
 ```
 
 The plugin is a universal binary supporting both Apple Silicon (arm64) and Intel (x64) Macs.
